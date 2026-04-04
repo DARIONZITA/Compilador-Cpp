@@ -1,0 +1,451 @@
+# ============================================================
+#  AUTÔMATO FINITO DETERMINÍSTICO — ANALISADOR LÉXICO C++
+#  Cada operador tem seu próprio estado Fim_ separado.
+#  Sintaxe: vírgulas como union, '*' como wildcard/else.
+# ============================================================
+
+states:
+  - Inicio
+
+  # ── Identificadores ──────────────────────────
+  - Identificador
+  - Fim_Identificador
+
+  # ── Inteiros ─────────────────────────────────
+  - Inteiro
+  - Fim_Inteiro
+
+  # ── Floats ───────────────────────────────────
+  - Float_Ponto
+  - Float_Digitos
+  - Fim_Float
+
+  # ── Strings ──────────────────────────────────
+  - String_Aberta
+  - String_Escape
+  - Fim_String
+
+  # ── Chars ────────────────────────────────────
+  - Char_Aberto
+  - Char_Escape
+  - Char_Conteudo
+  - Fim_Char
+
+  # ── Adição ───────────────────────────────────
+  - Op_Mais
+  - Fim_Adicao          # +
+  - Fim_Incremento      # ++
+  - Fim_MaisIgual       # +=
+
+  # ── Subtração ────────────────────────────────
+  - Op_Menos
+  - Fim_Subtracao       # -
+  - Fim_Decremento      # --
+  - Fim_MenosIgual      # -=
+  - Fim_Seta            # ->
+
+  # ── Multiplicação ────────────────────────────
+  - Op_Vezes
+  - Fim_Multiplicacao   # *
+  - Fim_VezesIgual      # *=
+
+  # ── Divisão ──────────────────────────────────
+  - Op_Div
+  - Fim_Divisao         # /
+  - Fim_DivIgual        # /=
+
+  # ── Módulo ───────────────────────────────────
+  - Op_Mod
+  - Fim_Modulo          # %
+  - Fim_ModIgual        # %=
+
+  # ── Atribuição ───────────────────────────────
+  - Op_Igual
+  - Fim_Atribuicao      # =
+  - Fim_Igual           # ==
+
+  # ── Relacionais ──────────────────────────────
+  - Op_Menor
+  - Op_Maior
+  - Fim_Menor           # <
+  - Fim_Maior           # >
+  - Fim_MenorIgual      # <=
+  - Fim_MaiorIgual      # >=
+
+  # ── Lógico NOT / Diferente ───────────────────
+  - Op_Exclamacao
+  - Fim_Not             # !
+  - Fim_Diferente       # !=
+
+  # ── Lógico AND / Bit AND ─────────────────────
+  - Op_E
+  - Fim_And             # &&
+  - Fim_BitAnd          # &
+
+  # ── Lógico OR / Bit OR ───────────────────────
+  - Op_Ou
+  - Fim_Or              # ||
+  - Fim_BitOr           # |
+
+  # ── Bit a bit ────────────────────────────────
+  - Fim_BitXor          # ^
+  - Fim_BitNot          # ~
+  - Fim_ShiftEsq        # <<
+  - Fim_ShiftDir        # >>
+
+  # ── Membro / Escopo ──────────────────────────
+  - Fim_PontoMembro     # .
+  - Op_DoisPontos
+  - Fim_Escopo          # ::
+  - Fim_DoisPontos      # :
+  - Fim_Interrogacao    # ?
+
+  # ── Comentários ──────────────────────────────
+  - Comentario_Linha
+  - Comentario_Bloco
+  - Comentario_Bloco_Ast
+  - Fim_Comentario_Linha
+  - Fim_Comentario_Bloco
+
+  # ── Pontuação ────────────────────────────────
+  - Fim_PtVirgula       # ;
+  - Fim_Virgula         # ,
+  - Fim_AbreParen       # (
+  - Fim_FechaParen      # )
+  - Fim_AbreChave       # {
+  - Fim_FechaChave      # }
+  - Fim_AbreColch       # [
+  - Fim_FechaColch      # ]
+
+  # ── Whitespace ───────────────────────────────
+  - Fim_Espaco
+
+  # ── Erro léxico ──────────────────────────────
+  - Erro
+
+alphabet:
+  - "[a-z]"
+  - "[A-Z]"
+  - "[0-9]"
+  - "_"
+  - "."
+  - "+"
+  - "-"
+  - "*"
+  - "/"
+  - "%"
+  - "="
+  - "<"
+  - ">"
+  - "!"
+  - "&"
+  - "|"
+  - "^"
+  - "~"
+  - "?"
+  - ":"
+  - ";"
+  - ","
+  - "("
+  - ")"
+  - "{"
+  - "}"
+  - "["
+  - "]"
+  - "\""
+  - "'"
+  - "\\"
+  - " "
+  - "\t"
+  - "\n"
+  - "\r"
+
+start_state: Inicio
+
+accept_states:
+  - Fim_Identificador
+  - Fim_Inteiro
+  - Fim_Float
+  - Fim_String
+  - Fim_Char
+  - Fim_Adicao
+  - Fim_Incremento
+  - Fim_MaisIgual
+  - Fim_Subtracao
+  - Fim_Decremento
+  - Fim_MenosIgual
+  - Fim_Seta
+  - Fim_Multiplicacao
+  - Fim_VezesIgual
+  - Fim_Divisao
+  - Fim_DivIgual
+  - Fim_Modulo
+  - Fim_ModIgual
+  - Fim_Atribuicao
+  - Fim_Igual
+  - Fim_Menor
+  - Fim_Maior
+  - Fim_MenorIgual
+  - Fim_MaiorIgual
+  - Fim_Not
+  - Fim_Diferente
+  - Fim_And
+  - Fim_Or
+  - Fim_BitAnd
+  - Fim_BitOr
+  - Fim_BitXor
+  - Fim_BitNot
+  - Fim_ShiftEsq
+  - Fim_ShiftDir
+  - Fim_PontoMembro
+  - Fim_Escopo
+  - Fim_DoisPontos
+  - Fim_Interrogacao
+  - Fim_Comentario_Linha
+  - Fim_Comentario_Bloco
+  - Fim_PtVirgula
+  - Fim_Virgula
+  - Fim_AbreParen
+  - Fim_FechaParen
+  - Fim_AbreChave
+  - Fim_FechaChave
+  - Fim_AbreColch
+  - Fim_FechaColch
+  - Fim_Espaco
+
+transitions:
+
+  # ════════════════════════════════════════════
+  #  INICIO
+  # ════════════════════════════════════════════
+  Inicio:
+    "[a-z], [A-Z], _":  Identificador
+    "[0-9]":            Inteiro
+    "\"":               String_Aberta
+    "'":                Char_Aberto
+    "+":                Op_Mais
+    "-":                Op_Menos
+    "[*]":              Op_Vezes
+    "/":                Op_Div
+    "%":                Op_Mod
+    "=":                Op_Igual
+    "<":                Op_Menor
+    ">":                Op_Maior
+    "!":                Op_Exclamacao
+    "&":                Op_E
+    "|":                Op_Ou
+    "^":                Fim_BitXor
+    "~":                Fim_BitNot
+    "?":                Fim_Interrogacao
+    ":":                Op_DoisPontos
+    ";":                Fim_PtVirgula
+    ",":                Fim_Virgula
+    "(":                Fim_AbreParen
+    ")":                Fim_FechaParen
+    "{":                Fim_AbreChave
+    "}":                Fim_FechaChave
+    "[":                Fim_AbreColch
+    "]":                Fim_FechaColch
+    ".":                Fim_PontoMembro
+    " , \t, \n, \r":    Fim_Espaco
+    "*":                Erro
+
+  # ════════════════════════════════════════════
+  #  IDENTIFICADORES / PALAVRAS-RESERVADAS
+  #  (int, if, while, class… distinguidos pelo
+  #   parser semântico após tokenização)
+  # ════════════════════════════════════════════
+  Identificador:
+    "[a-z], [A-Z], [0-9], _":  Identificador
+    "*":                        Fim_Identificador
+
+  # ════════════════════════════════════════════
+  #  LITERAIS INTEIROS    42  0  1000
+  # ════════════════════════════════════════════
+  Inteiro:
+    "[0-9]":  Inteiro
+    ".":      Float_Ponto
+    "*":      Fim_Inteiro
+
+  # ════════════════════════════════════════════
+  #  LITERAIS FLOAT       3.14  0.5  1.
+  # ════════════════════════════════════════════
+  Float_Ponto:
+    "[0-9]":  Float_Digitos
+    "*":      Fim_Float       # "1." é float válido
+
+  Float_Digitos:
+    "[0-9]":  Float_Digitos
+    "*":      Fim_Float
+
+  # ════════════════════════════════════════════
+  #  LITERAIS STRING      "hello"  "linha\n"
+  # ════════════════════════════════════════════
+  String_Aberta:
+    "\"":  Fim_String
+    "\\":  String_Escape
+    "*":   String_Aberta
+
+  String_Escape:
+    "*":   String_Aberta      # consome qualquer char escapado
+
+  # ════════════════════════════════════════════
+  #  LITERAIS CHAR        'a'  '\n'  '\\'
+  # ════════════════════════════════════════════
+  Char_Aberto:
+    "\\":  Char_Escape
+    "*":   Char_Conteudo
+
+  Char_Escape:
+    "*":   Char_Conteudo      # consome o char escapado
+
+  Char_Conteudo:
+    "'":   Fim_Char
+
+  # ════════════════════════════════════════════
+  #  ADIÇÃO
+  #    +   →  Fim_Adicao
+  #    ++  →  Fim_Incremento
+  #    +=  →  Fim_MaisIgual
+  # ════════════════════════════════════════════
+  Op_Mais:
+    "+":  Fim_Incremento
+    "=":  Fim_MaisIgual
+    "*":  Fim_Adicao
+
+  # ════════════════════════════════════════════
+  #  SUBTRAÇÃO
+  #    -   →  Fim_Subtracao
+  #    --  →  Fim_Decremento
+  #    -=  →  Fim_MenosIgual
+  #    ->  →  Fim_Seta
+  # ════════════════════════════════════════════
+  Op_Menos:
+    "-":  Fim_Decremento
+    "=":  Fim_MenosIgual
+    ">":  Fim_Seta
+    "*":  Fim_Subtracao
+
+  # ════════════════════════════════════════════
+  #  MULTIPLICAÇÃO
+  #    *   →  Fim_Multiplicacao
+  #    *=  →  Fim_VezesIgual
+  # ════════════════════════════════════════════
+  Op_Vezes:
+    "=":   Fim_VezesIgual
+    "[*]": Fim_Multiplicacao   # * literal (ex: a * b * c)
+    "*":   Fim_Multiplicacao   # wildcard: qualquer outro char
+
+  # ════════════════════════════════════════════
+  #  DIVISÃO
+  #    /   →  Fim_Divisao
+  #    /=  →  Fim_DivIgual
+  #    //  →  Comentario_Linha
+  #    /*  →  Comentario_Bloco
+  # ════════════════════════════════════════════
+  Op_Div:
+    "/":    Comentario_Linha   # //
+    "=":    Fim_DivIgual       # /=
+    "[*]":  Comentario_Bloco   # /*  ← asterisco literal
+    "*":    Fim_Divisao        # qualquer outro char → / sozinho
+
+  # ════════════════════════════════════════════
+  #  MÓDULO
+  #    %   →  Fim_Modulo
+  #    %=  →  Fim_ModIgual
+  # ════════════════════════════════════════════
+  Op_Mod:
+    "=":  Fim_ModIgual
+    "*":  Fim_Modulo
+
+  # ════════════════════════════════════════════
+  #  ATRIBUIÇÃO / IGUALDADE
+  #    =   →  Fim_Atribuicao
+  #    ==  →  Fim_Igual
+  # ════════════════════════════════════════════
+  Op_Igual:
+    "=":  Fim_Igual
+    "*":  Fim_Atribuicao
+
+  # ════════════════════════════════════════════
+  #  MENOR / SHIFT ESQUERDO / MENOR-IGUAL
+  #    <   →  Fim_Menor
+  #    <=  →  Fim_MenorIgual
+  #    <<  →  Fim_ShiftEsq
+  # ════════════════════════════════════════════
+  Op_Menor:
+    "=":  Fim_MenorIgual
+    "<":  Fim_ShiftEsq
+    "*":  Fim_Menor
+
+  # ════════════════════════════════════════════
+  #  MAIOR / SHIFT DIREITO / MAIOR-IGUAL
+  #    >   →  Fim_Maior
+  #    >=  →  Fim_MaiorIgual
+  #    >>  →  Fim_ShiftDir
+  # ════════════════════════════════════════════
+  Op_Maior:
+    "=":  Fim_MaiorIgual
+    ">":  Fim_ShiftDir
+    "*":  Fim_Maior
+
+  # ════════════════════════════════════════════
+  #  NOT LÓGICO / DIFERENTE
+  #    !   →  Fim_Not
+  #    !=  →  Fim_Diferente
+  # ════════════════════════════════════════════
+  Op_Exclamacao:
+    "=":  Fim_Diferente
+    "*":  Fim_Not
+
+  # ════════════════════════════════════════════
+  #  AND LÓGICO / AND BIT A BIT
+  #    &   →  Fim_BitAnd
+  #    &&  →  Fim_And
+  # ════════════════════════════════════════════
+  Op_E:
+    "&":  Fim_And
+    "*":  Fim_BitAnd
+
+  # ════════════════════════════════════════════
+  #  OR LÓGICO / OR BIT A BIT
+  #    |   →  Fim_BitOr
+  #    ||  →  Fim_Or
+  # ════════════════════════════════════════════
+  Op_Ou:
+    "|":  Fim_Or
+    "*":  Fim_BitOr
+
+  # ════════════════════════════════════════════
+  #  ESCOPO
+  #    :   →  Fim_DoisPontos
+  #    ::  →  Fim_Escopo
+  # ════════════════════════════════════════════
+  Op_DoisPontos:
+    ":":  Fim_Escopo
+    "*":  Fim_DoisPontos
+
+  # ════════════════════════════════════════════
+  #  COMENTÁRIO DE LINHA    // até \n
+  # ════════════════════════════════════════════
+  Comentario_Linha:
+    "\n":  Fim_Comentario_Linha
+    "*":   Comentario_Linha
+
+  # ════════════════════════════════════════════
+  #  COMENTÁRIO DE BLOCO    /* ... */
+  # ════════════════════════════════════════════
+  Comentario_Bloco:
+    "[*]":  Comentario_Bloco_Ast   # asterisco literal → pode fechar
+    "*":    Comentario_Bloco       # qualquer outro char, continua
+
+  Comentario_Bloco_Ast:
+    "/":    Fim_Comentario_Bloco   # fechou */
+    "[*]":  Comentario_Bloco_Ast   # mais asteriscos: **...
+    "*":    Comentario_Bloco       # não era '/', volta a consumir
+
+  # ════════════════════════════════════════════
+  #  WHITESPACE   (agrupa sequências contíguas)
+  # ════════════════════════════════════════════
+  Fim_Espaco:
+    " , \t, \n, \r":  Fim_Espaco

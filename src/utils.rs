@@ -12,11 +12,12 @@ pub fn eh_espaco(c: char) -> bool {
     matches!(c, ' ' | '\t' | '\n' | '\r')
 }
 
-pub fn push_token(tokens: &mut Vec<TokenInfo>, kind: Token, lexema: &mut String) {
+pub fn push_token(tokens: &mut Vec<TokenInfo>, kind: Token, lexema: &mut String, linha: usize) {
     if !lexema.is_empty() {
         tokens.push(TokenInfo {
             kind,
             lexema: lexema.clone(),
+            linha,
         });
         lexema.clear();
     }

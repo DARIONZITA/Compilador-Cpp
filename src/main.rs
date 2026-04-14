@@ -10,7 +10,7 @@ fn main() {
 
     let tokens = lexer::tokenizar(&conteudo);
     for token in tokens {
-        println!("{:?} => {:?}", token.kind, token.lexema);
+        println!("{:?} => {:?} : {}", token.kind, token.lexema, token.linha);
     }
 
     println!("{}", conteudo);

@@ -15,6 +15,7 @@ fn voltar_caractere(index: usize) -> usize {
     } else {
         0
     }
+    
 }
 
 fn identificadores_reservados(lexema: &str) -> Token {
@@ -97,7 +98,7 @@ fn identificadores_reservados(lexema: &str) -> Token {
     }
 }
 
-fn analex(atual: char, tokens: &mut Vec<TokenInfo>, estado: &mut Estado, lexema: &mut String) {
+fn analex(atual: char, tokens: &mut Vec<TokenInfo>, estado: &mut Estado, lexema: &mut String, linha: usize) {
     match *estado {
         Estado::Inicio => {
             if atual == '\0' {
@@ -170,51 +171,51 @@ fn analex(atual: char, tokens: &mut Vec<TokenInfo>, estado: &mut Estado, lexema:
                     }
                     '^' => {
                         lexema.push(atual);
-                        push_token(tokens, Token::BitXor, lexema);
+                        push_token(tokens, Token::BitXor, lexema, linha);
                     }
                     '~' => {
                         lexema.push(atual);
-                        push_token(tokens, Token::BitNot, lexema);
+                        push_token(tokens, Token::BitNot, lexema, linha);
                     }
                     '?' => {
                         lexema.push(atual);
-                        push_token(tokens, Token::Interrogacao, lexema);
+                        push_token(tokens, Token::Interrogacao, lexema, linha);
                     }
                     ';' => {
                         lexema.push(atual);
-                        push_token(tokens, Token::PtVirgula, lexema);
+                        push_token(tokens, Token::PtVirgula, lexema, linha);
                     }
                     ',' => {
                         lexema.push(atual);
-                        push_token(tokens, Token::Virgula, lexema);
+                        push_token(tokens, Token::Virgula, lexema, linha);
                     }
                     '(' => {
                         lexema.push(atual);
-                        push_token(tokens, Token::AbreParen, lexema);
+                        push_token(tokens, Token::AbreParen, lexema, linha);
                     }
                     ')' => {
                         lexema.push(atual);
-                        push_token(tokens, Token::FechaParen, lexema);
+                        push_token(tokens, Token::FechaParen, lexema, linha);
                     }
                     '{' => {
                         lexema.push(atual);
-                        push_token(tokens, Token::AbreChave, lexema);
+                        push_token(tokens, Token::AbreChave, lexema, linha);
                     }
                     '}' => {
                         lexema.push(atual);
-                        push_token(tokens, Token::FechaChave, lexema);
+                        push_token(tokens, Token::FechaChave, lexema, linha);
                     }
                     '[' => {
                         lexema.push(atual);
-                        push_token(tokens, Token::AbreColch, lexema);
+                        push_token(tokens, Token::AbreColch, lexema, linha);
                     }
                     ']' => {
                         lexema.push(atual);
-                        push_token(tokens, Token::FechaColch, lexema);
+                        push_token(tokens, Token::FechaColch, lexema, linha);
                     }
                     '.' => {
                         lexema.push(atual);
-                        push_token(tokens, Token::PontoMembro, lexema);
+                        push_token(tokens, Token::PontoMembro, lexema, linha);
                     }
                     _ => {}
                 }
@@ -225,7 +226,7 @@ fn analex(atual: char, tokens: &mut Vec<TokenInfo>, estado: &mut Estado, lexema:
                 lexema.push(atual);
             } else {
                 let token = identificadores_reservados(lexema);
-                push_token(tokens, token, lexema);
+                push_token(tokens, token, lexema, linha);
                 *estado = Estado::Outro;
             }
         }
@@ -236,7 +237,7 @@ fn analex(atual: char, tokens: &mut Vec<TokenInfo>, estado: &mut Estado, lexema:
                 lexema.push(atual);
                 *estado = Estado::FloatPonto;
             } else {
-                push_token(tokens, Token::Inteiro, lexema);
+                push_token(tokens, Token::Inteiro, lexema, linha);
                 *estado = Estado::Outro;
             }
         }
@@ -245,7 +246,7 @@ fn analex(atual: char, tokens: &mut Vec<TokenInfo>, estado: &mut Estado, lexema:
                 lexema.push(atual);
                 *estado = Estado::FloatDigitos;
             } else {
-                push_token(tokens, Token::Float, lexema);
+                push_token(tokens, Token::Float, lexema, linha);
                 *estado = Estado::Outro;
             }
         }
@@ -253,13 +254,13 @@ fn analex(atual: char, tokens: &mut Vec<TokenInfo>, estado: &mut Estado, lexema:
             if eh_digito(atual) {
                 lexema.push(atual);
             } else {
-                push_token(tokens, Token::Float, lexema);
+                push_token(tokens, Token::Float, lexema, linha);
                 *estado = Estado::Outro;
             }
         }
         Estado::StringAberta => {
             if atual == '\0' {
-                push_token(tokens, Token::String, lexema);
+                push_token(tokens, Token::String, lexema, linha);
                 *estado = Estado::Inicio;
             } else if atual == '\\' {
                 lexema.push(atual);
@@ -267,7 +268,7 @@ fn analex(atual: char, tokens: &mut Vec<TokenInfo>, estado: &mut Estado, lexema:
             } else {
                 lexema.push(atual);
                 if atual == '"' {
-                    push_token(tokens, Token::String, lexema);
+                    push_token(tokens, Token::String, lexema, linha);
                     *estado = Estado::Inicio;
                 }
             }
@@ -286,7 +287,7 @@ fn analex(atual: char, tokens: &mut Vec<TokenInfo>, estado: &mut Estado, lexema:
                 lexema.push(atual);
                 *estado = Estado::CharConteudo;
             } else {
-                push_token(tokens, Token::Char, lexema);
+                push_token(tokens, Token::Char, lexema, linha);
                 *estado = Estado::Inicio;
             }
         }
@@ -295,16 +296,16 @@ fn analex(atual: char, tokens: &mut Vec<TokenInfo>, estado: &mut Estado, lexema:
                 lexema.push(atual);
                 *estado = Estado::CharConteudo;
             } else {
-                push_token(tokens, Token::Char, lexema);
+                push_token(tokens, Token::Char, lexema, linha);
                 *estado = Estado::Inicio;
             }
         }
         Estado::CharConteudo => {
             if atual == '\'' {
                 lexema.push(atual);
-                push_token(tokens, Token::Char, lexema);
+                push_token(tokens, Token::Char, lexema, linha);
             } else {
-                push_token(tokens, Token::Char, lexema);
+                push_token(tokens, Token::Char, lexema, linha);
                 *estado = Estado::Outro;
                 return;
             }
@@ -313,42 +314,42 @@ fn analex(atual: char, tokens: &mut Vec<TokenInfo>, estado: &mut Estado, lexema:
         Estado::OpMais => {
             if atual == '+' {
                 lexema.push(atual);
-                push_token(tokens, Token::Incremento, lexema);
+                push_token(tokens, Token::Incremento, lexema, linha);
                 *estado = Estado::Inicio;
             } else if atual == '=' {
                 lexema.push(atual);
-                push_token(tokens, Token::MaisIgual, lexema);
+                push_token(tokens, Token::MaisIgual, lexema, linha);
                 *estado = Estado::Inicio;
             } else {
-                push_token(tokens, Token::Adicao, lexema);
+                push_token(tokens, Token::Adicao, lexema, linha);
                 *estado = Estado::Outro;
             }
         }
         Estado::OpMenos => {
             if atual == '-' {
                 lexema.push(atual);
-                push_token(tokens, Token::Decremento, lexema);
+                push_token(tokens, Token::Decremento, lexema, linha);
                 *estado = Estado::Inicio;
             } else if atual == '=' {
                 lexema.push(atual);
-                push_token(tokens, Token::MenosIgual, lexema);
+                push_token(tokens, Token::MenosIgual, lexema, linha);
                 *estado = Estado::Inicio;
             } else if atual == '>' {
                 lexema.push(atual);
-                push_token(tokens, Token::Seta, lexema);
+                push_token(tokens, Token::Seta, lexema, linha);
                 *estado = Estado::Inicio;
             } else {
-                push_token(tokens, Token::Subtracao, lexema);
+                push_token(tokens, Token::Subtracao, lexema, linha);
                 *estado = Estado::Outro;
             }
         }
         Estado::OpVezes => {
             if atual == '=' {
                 lexema.push(atual);
-                push_token(tokens, Token::VezesIgual, lexema);
+                push_token(tokens, Token::VezesIgual, lexema, linha);
                 *estado = Estado::Inicio;
             } else {
-                push_token(tokens, Token::Multiplicacao, lexema);
+                push_token(tokens, Token::Multiplicacao, lexema, linha);
                 *estado = Estado::Outro;
             }
         }
@@ -358,107 +359,107 @@ fn analex(atual: char, tokens: &mut Vec<TokenInfo>, estado: &mut Estado, lexema:
                 *estado = Estado::ComentarioLinha;
             } else if atual == '=' {
                 lexema.push(atual);
-                push_token(tokens, Token::DivIgual, lexema);
+                push_token(tokens, Token::DivIgual, lexema, linha);
                 *estado = Estado::Inicio;
             } else if atual == '*' {
                 lexema.push(atual);
                 *estado = Estado::ComentarioBloco;
             } else {
-                push_token(tokens, Token::Divisao, lexema);
+                push_token(tokens, Token::Divisao, lexema, linha);
                 *estado = Estado::Outro;
             }
         }
         Estado::OpMod => {
             if atual == '=' {
                 lexema.push(atual);
-                push_token(tokens, Token::ModIgual, lexema);
+                push_token(tokens, Token::ModIgual, lexema, linha);
                 *estado = Estado::Inicio;
             } else {
-                push_token(tokens, Token::Modulo, lexema);
+                push_token(tokens, Token::Modulo, lexema, linha);
                 *estado = Estado::Outro;
             }
         }
         Estado::OpIgual => {
             if atual == '=' {
                 lexema.push(atual);
-                push_token(tokens, Token::Igual, lexema);
+                push_token(tokens, Token::Igual, lexema, linha);
                 *estado = Estado::Inicio;
             } else {
-                push_token(tokens, Token::Atribuicao, lexema);
+                push_token(tokens, Token::Atribuicao, lexema, linha);
                 *estado = Estado::Outro;
             }
         }
         Estado::OpMenor => {
             if atual == '=' {
                 lexema.push(atual);
-                push_token(tokens, Token::MenorIgual, lexema);
+                push_token(tokens, Token::MenorIgual, lexema, linha);
                 *estado = Estado::Inicio;
             } else if atual == '<' {
                 lexema.push(atual);
-                push_token(tokens, Token::ShiftEsq, lexema);
+                push_token(tokens, Token::ShiftEsq, lexema, linha);
                 *estado = Estado::Inicio;
             } else {
-                push_token(tokens, Token::Menor, lexema);
+                push_token(tokens, Token::Menor, lexema, linha);
                 *estado = Estado::Outro;
             }
         }
         Estado::OpMaior => {
             if atual == '=' {
                 lexema.push(atual);
-                push_token(tokens, Token::MaiorIgual, lexema);
+                push_token(tokens, Token::MaiorIgual, lexema, linha);
                 *estado = Estado::Inicio;
             } else if atual == '>' {
                 lexema.push(atual);
-                push_token(tokens, Token::ShiftDir, lexema);
+                push_token(tokens, Token::ShiftDir, lexema, linha);
                 *estado = Estado::Inicio;
             } else {
-                push_token(tokens, Token::Maior, lexema);
+                push_token(tokens, Token::Maior, lexema, linha);
                 *estado = Estado::Outro;
             }
         }
         Estado::OpExclamacao => {
             if atual == '=' {
                 lexema.push(atual);
-                push_token(tokens, Token::Diferente, lexema);
+                push_token(tokens, Token::Diferente, lexema, linha);
                 *estado = Estado::Inicio;
             } else {
-                push_token(tokens, Token::Not, lexema);
+                push_token(tokens, Token::Not, lexema, linha);
                 *estado = Estado::Outro;
             }
         }
         Estado::OpE => {
             if atual == '&' {
                 lexema.push(atual);
-                push_token(tokens, Token::And, lexema);
+                push_token(tokens, Token::And, lexema, linha);
                 *estado = Estado::Inicio;
             } else {
-                push_token(tokens, Token::BitAnd, lexema);
+                push_token(tokens, Token::BitAnd, lexema, linha);
                 *estado = Estado::Outro;
             }
         }
         Estado::OpOu => {
             if atual == '|' {
                 lexema.push(atual);
-                push_token(tokens, Token::Or, lexema);
+                push_token(tokens, Token::Or, lexema, linha);
                 *estado = Estado::Inicio;
             } else {
-                push_token(tokens, Token::BitOr, lexema);
+                push_token(tokens, Token::BitOr, lexema, linha);
                 *estado = Estado::Outro;
             }
         }
         Estado::OpDoisPontos => {
             if atual == ':' {
                 lexema.push(atual);
-                push_token(tokens, Token::Escopo, lexema);
+                push_token(tokens, Token::Escopo, lexema, linha);
                 *estado = Estado::Inicio;
             } else {
-                push_token(tokens, Token::DoisPontos, lexema);
+                push_token(tokens, Token::DoisPontos, lexema, linha);
                 *estado = Estado::Outro;
             }
         }
         Estado::ComentarioLinha => {
             if atual == '\n' || atual == '\0' {
-                push_token(tokens, Token::ComentarioLinha, lexema);
+                push_token(tokens, Token::ComentarioLinha, lexema, linha);
                 *estado = Estado::Outro;
             } else {
                 lexema.push(atual);
@@ -466,7 +467,7 @@ fn analex(atual: char, tokens: &mut Vec<TokenInfo>, estado: &mut Estado, lexema:
         }
         Estado::ComentarioBloco => {
             if atual == '\0' {
-                push_token(tokens, Token::ComentarioBloco, lexema);
+                push_token(tokens, Token::ComentarioBloco, lexema, linha);
                 *estado = Estado::Inicio;
             } else if atual == '*' {
                 lexema.push(atual);
@@ -478,12 +479,12 @@ fn analex(atual: char, tokens: &mut Vec<TokenInfo>, estado: &mut Estado, lexema:
         Estado::ComentarioBlocoAst => {
             if atual == '/' {
                 lexema.push(atual);
-                push_token(tokens, Token::ComentarioBloco, lexema);
+                push_token(tokens, Token::ComentarioBloco, lexema, linha);
                 *estado = Estado::Inicio;
             } else if atual == '*' {
                 lexema.push(atual);
             } else if atual == '\0' {
-                push_token(tokens, Token::ComentarioBloco, lexema);
+                push_token(tokens, Token::ComentarioBloco, lexema, linha);
                 *estado = Estado::Inicio;
             } else {
                 lexema.push(atual);
@@ -501,12 +502,15 @@ pub fn tokenizar(conteudo: &str) -> Vec<TokenInfo> {
     let mut estado = Estado::Inicio;
     let mut lexema = String::new();
     let mut i = 0usize;
+    let mut linha = 1usize;
 
     while i <= chars.len() {
         let atual = ler_caractere(&chars, i);
 
-        analex(atual, &mut tokens, &mut estado, &mut lexema);
-
+        analex(atual, &mut tokens, &mut estado, &mut lexema, linha);
+        if atual == '\n' {
+            linha += 1;
+        }
         if matches!(estado, Estado::Outro) {
             i = voltar_caractere(i);
             estado = Estado::Inicio;

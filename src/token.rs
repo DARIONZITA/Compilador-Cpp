@@ -140,6 +140,7 @@ pub enum Token {
 pub struct TokenInfo {
     pub kind: Token,
     pub lexema: String,
+    pub linha: usize,
 }
 
 #[derive(Debug, Clone, Copy)]

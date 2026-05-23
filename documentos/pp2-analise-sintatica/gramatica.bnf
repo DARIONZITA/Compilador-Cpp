@@ -1,0 +1,292 @@
+(* ============================================================ *)
+(*  GRAMÁTICA BNF — MINI-COMPILADOR C++                         *)
+(*  Sem recursividade à esquerda · Sem ambiguidade              *)
+(* ============================================================ *)
+
+
+(* ── PROGRAMA ── *)
+
+<programa>           ::= <include-seq> <declaracao-seq>
+
+<include-seq>        ::= <include> <include-seq>
+                       | ε
+
+<include>            ::= "#include" <include-alvo>
+
+<include-alvo>       ::= "<" <cadeia> ">"
+                       | '"' <cadeia> '"'
+
+<declaracao-seq>     ::= <declaracao> <declaracao-seq>
+                       | ε
+
+<declaracao>         ::= <declaracao-classe>
+                       | <modificador> <tipo> <identificador> <sufixo-decl>
+
+<sufixo-decl>        ::= "(" <parametros> ")" <corpo-funcao>
+                       | <var-resto> ";"
+
+<corpo-funcao>       ::= <bloco>
+                       | ";"
+
+
+(* ── MODIFICADORES E TIPOS ── *)
+
+<modificador>        ::= "public"
+                       | "private"
+                       | "protected"
+                       | "static"
+                       | "const"
+                       | ε
+
+<tipo>               ::= "int"
+                       | "float"
+                       | "double"
+                       | "char"
+                       | "bool"
+                       | "void"
+                       | "string"
+                       | <identificador>
+
+<acesso>             ::= "public"
+                       | "private"
+                       | "protected"
+
+
+(* ── CLASSE ── *)
+
+<declaracao-classe>  ::= "class" <identificador> <heranca> "{" <membros-classe> "}" ";"
+
+<heranca>            ::= ":" <acesso> <identifiador>
+                       | ε
+
+<membros-classe>     ::= <seccao-acesso> <membros-classe>
+                       | ε
+
+<seccao-acesso>      ::= <acesso> ":" <lista-membros>
+
+<lista-membros>      ::= <membro> <lista-membros>
+                       | ε
+
+
+<membro>             ::= <declaracao-construtor>
+                       | <modificador> <tipo> <identificador> <sufixo-decl>
+
+<declaracao-construtor> ::= <identificador> "(" <parametros> ")" <bloco>
+
+
+(* ── PARÂMETROS ── *)
+
+<parametros>         ::= <lista-parametros>
+                       | ε
+
+<lista-parametros>   ::= <parametro> <lista-parametros'>
+
+<lista-parametros'>  ::= "," <parametro> <lista-parametros'>
+                       | ε
+
+<parametro>          ::= <tipo> <identificador> <param-sufixo>
+
+<param-sufixo>       ::= "[" "]"
+                       | ε
+
+
+(* ── VARIÁVEIS ── *)
+
+<var-resto>          ::= "=" <expressao> <lista-variaveis'>
+                       | "[" <dim-conteudo> "]" <mais-dims> <init-array> <lista-variaveis'>
+                       | <lista-variaveis'>
+
+<dim-conteudo>       ::= <expressao>
+                       | ε
+
+<mais-dims>          ::= "[" <dim-conteudo> "]" <mais-dims>
+                       | ε
+
+<init-array>         ::= "=" "{" <lista-init> "}"
+                       | ε
+
+<lista-variaveis'>   ::= "," <identificador> <var-resto>
+                       | ε
+
+<lista-init>         ::= <expressao> <lista-init'>
+
+<lista-init'>        ::= "," <expressao> <lista-init'>
+                       | ε
+
+
+(* ── BLOCO E COMANDOS ── *)
+
+<bloco>              ::= "{" <comando-seq> "}"
+
+<comando-seq>        ::= <comando> <comando-seq>
+                       | ε
+
+<comando>            ::= <modificador> <tipo> <identificador> <sufixo-decl>
+                       | <comando-seleccao>
+                       | <comando-repeticao>
+                       | <comando-io>
+                       | "return" <expressao-opt> ";"
+                       | "break"    ";"
+                       | "continue" ";"
+                       | <bloco>
+                       | <expressao> ";"
+
+
+(* ── SELECÇÃO ── *)
+
+<comando-seleccao>   ::= "if"     "(" <expressao> ")" <bloco> <else-parte>
+                       | "switch" "(" <expressao> ")" "{" <casos> "}"
+
+
+<else-parte>         ::= "else" <else-corpo>
+                       | ε
+
+<else-corpo>         ::= "if" "(" <expressao> ")" <bloco> <else-parte>
+                       | <bloco>
+
+<casos>              ::= <caso> <casos>
+                       | ε
+
+<caso>               ::= "case"    <literal> ":" <comando-seq>
+                       | "default" ":"           <comando-seq>
+
+
+(* ── REPETIÇÃO ── *)
+
+<comando-repeticao>  ::= "while" "(" <expressao> ")" <bloco>
+                       | "do" <bloco> "while" "(" <expressao> ")" ";"
+                       | "for" "(" <for-init> <expressao-opt> ";" <expressao-opt> ")" <bloco>
+
+<for-init>           ::= <tipo> <identificador> <var-resto> ";"
+                       | <expressao> ";"
+                       | ";"
+
+<expressao-opt>      ::= <expressao>
+                       | ε
+
+
+(* ── ENTRADA E SAÍDA ── *)
+
+<comando-io>         ::= "cin"  <cin-cadeia>  ";"
+                       | "cout" <cout-cadeia> ";"
+
+<cin-cadeia>         ::= ">>" <expressao> <cin-cadeia'>
+
+<cin-cadeia'>        ::= ">>" <expressao> <cin-cadeia'>
+                       | ε
+
+<cout-cadeia>        ::= "<<" <cout-item> <cout-cadeia'>
+
+<cout-cadeia'>       ::= "<<" <cout-item> <cout-cadeia'>
+                       | ε
+
+<cout-item>          ::= "endl"
+                       | <expressao>
+
+
+(* ── EXPRESSÕES (precedência crescente de cima para baixo) ── *)
+
+<expressao>          ::= <atribuicao>
+
+(* Recursividade à DIREITA — correcta para top-down *)
+<atribuicao>         ::= <expr-logica> <atribuicao'>
+
+<atribuicao'>        ::= <op-atrib> <atribuicao>
+                       | ε
+
+<op-atrib>           ::= "=" | "+=" | "-=" | "*=" | "/=" | "%="
+
+
+(* Lógica — SEM recursividade à esquerda *)
+<expr-logica>        ::= <expr-relacional> <expr-logica'>
+
+<expr-logica'>       ::= "&&" <expr-relacional> <expr-logica'>
+                       | "||" <expr-relacional> <expr-logica'>
+                       | ε
+
+
+(* Relacional — SEM recursividade à esquerda *)
+<expr-relacional>    ::= <expr-aritmetica> <expr-relacional'>
+
+<expr-relacional'>   ::= <op-relacional> <expr-aritmetica> <expr-relacional'>
+                       | ε
+
+<op-relacional>      ::= "==" | "!=" | "<" | ">" | "<=" | ">="
+
+
+(* Aritmética — SEM recursividade à esquerda *)
+<expr-aritmetica>    ::= <termo> <expr-aritmetica'>
+
+<expr-aritmetica'>   ::= "+" <termo> <expr-aritmetica'>
+                       | "-" <termo> <expr-aritmetica'>
+                       | ε
+
+
+(* Termo — SEM recursividade à esquerda *)
+<termo>              ::= <factor> <termo'>
+
+<termo'>             ::= "*" <factor> <termo'>
+                       | "/" <factor> <termo'>
+                       | "%" <factor> <termo'>
+                       | ε
+
+
+(* Unário *)
+<factor>             ::= <unario>
+
+<unario>             ::= <postfixo>
+                       | "!"  <unario>
+                       | "-"  <unario>
+                       | "++" <unario>
+                       | "--" <unario>
+                       | "&"  <unario>
+                       | "*"  <unario>
+
+
+(* Postfixo — SEM recursividade à esquerda *)
+<postfixo>           ::= <primario> <postfixo'>
+
+<postfixo'>          ::= "++"                 <postfixo'>
+                       | "--"                 <postfixo'>
+                       | "[" <expressao> "]"  <postfixo'>
+                       | "(" <argumentos> ")" <postfixo'>
+                       | "."  <identificador> <postfixo'>
+                       | "->" <identificador> <postfixo'>
+                       | ε
+
+
+<primario>           ::= <literal>
+                       | <identificador>
+                       | "this"
+                       | "(" <expressao> ")"
+                       | "new" <tipo> <new-sufixo>
+
+<new-sufixo>         ::= "(" <argumentos> ")"
+                       | "[" <expressao> "]"
+
+
+(* Argumentos *)
+<argumentos>         ::= <lista-args>
+                       | ε
+
+<lista-args>         ::= <expressao> <lista-args'>
+
+<lista-args'>        ::= "," <expressao> <lista-args'>
+                       | ε
+
+
+(* ── LITERAIS E TOKENS ── *)
+
+<literal>            ::= <inteiro>
+                       | <real>
+                       | <caracter>
+                       | <cadeia>
+                       | "true"
+                       | "false"
+                       | "nullptr"
+
+<inteiro>            ::= [1-9][0-9]* | "0"
+<real>               ::= [0-9]+ "." [0-9]+
+<caracter>           ::= "'" <c-char> "'"
+<cadeia>             ::= '"' <s-char>* '"'
+<identificador>      ::= [a-zA-Z_][a-zA-Z0-9_]*

@@ -94,6 +94,8 @@ fn identificadores_reservados(lexema: &str) -> Token {
         "true" => Token::TrueLiteral,
         "false" => Token::FalseLiteral,
         "typeid" => Token::Typeid,
+        "cin" => Token::Cin,
+        "cout" => Token::Cout,
         _ => Token::Identificador,
     }
 }
@@ -120,7 +122,7 @@ fn analex(atual: char, tokens: &mut Vec<TokenInfo>, estado: &mut Estado, lexema:
             } else if eh_espaco(atual) {
                 *estado = Estado::Inicio;
             } else {
-                match atual {
+                match atual {                    
                     '+' => {
                         lexema.push(atual);
                         *estado = Estado::OpMais;
@@ -398,9 +400,24 @@ fn analex(atual: char, tokens: &mut Vec<TokenInfo>, estado: &mut Estado, lexema:
                 lexema.push(atual);
                 push_token(tokens, Token::ShiftEsq, lexema, linha);
                 *estado = Estado::Inicio;
+            } else if eh_letra(atual) || atual == '_' {
+                lexema.clear();
+                lexema.push(atual);
+                *estado = Estado::IncludeAngle;
             } else {
                 push_token(tokens, Token::Menor, lexema, linha);
                 *estado = Estado::Outro;
+            }
+        }
+        Estado::IncludeAngle => {
+            if atual == '>' {
+                push_token(tokens, Token::String, lexema, linha);
+                *estado = Estado::Inicio;
+            } else if eh_letra(atual) || eh_digito(atual) || atual == '_' || atual == '.' {
+                lexema.push(atual);
+            } else if atual == '\0' {
+                push_token(tokens, Token::String, lexema, linha);
+                *estado = Estado::Inicio;
             }
         }
         Estado::OpMaior => {
@@ -518,6 +535,8 @@ pub fn tokenizar(conteudo: &str) -> Vec<TokenInfo> {
 
         i += 1;
     }
+    
+    tokens.retain(|t| !matches!(t.kind, Token::ComentarioLinha | Token::ComentarioBloco));
 
     tokens
 }

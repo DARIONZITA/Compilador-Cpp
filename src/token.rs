@@ -1,4 +1,4 @@
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Token {
     Identificador,
     Inteiro,
@@ -134,6 +134,8 @@ pub enum Token {
     TrueLiteral,   // true
     FalseLiteral,  // false
     Typeid,
+    Cin,
+    Cout
 }
 
 #[derive(Debug)]
@@ -167,6 +169,7 @@ pub enum Estado {
     OpE,
     OpOu,
     OpDoisPontos,
+    IncludeAngle,
     ComentarioLinha,
     ComentarioBloco,
     ComentarioBlocoAst,

@@ -29,6 +29,7 @@ fn identificadores_reservados(lexema: &str) -> Token {
         "float" => Token::FloatType,
         "char" => Token::CharType,
         "void" => Token::Void,
+        "string" => Token::StringType,
         "class" => Token::Class,
         "struct" => Token::Struct,
         "enum" => Token::Enum,

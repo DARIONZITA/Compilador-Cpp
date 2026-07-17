@@ -56,6 +56,7 @@ pub enum Token {
     Int,
     FloatType,
     CharType,
+    StringType,
     Void,
     Class,
     Struct,

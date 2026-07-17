@@ -1,7 +1,8 @@
 #include <stdio.h>
 int main()
 {
-    int k3= 3.14.90909090;
+    bool k1= true;
+    int k3= 3.14.member;
     k3=10;
     switch (k3)
     {

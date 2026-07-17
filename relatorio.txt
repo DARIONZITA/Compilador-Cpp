@@ -1,0 +1,426 @@
+=== RELATORIO DE ANALISE SEMANTICA ===
+
+--- main.cpp ---
+Resultado: ERRO SEMANTICO
+Variavel 'member' nao declarada na linha 5
+
+--- test_array.cpp ---
+Resultado: ERRO SEMANTICO
+Indice do array deve ser 'int', encontrou 'double' na linha 7
+
+--- test_assign.cpp ---
+Resultado: ERRO SEMANTICO
+Atribuicao incompativel na linha 9: 'int' = 'string'
+
+--- test_binary_op.cpp ---
+Resultado: SUCESSO
+
+AST Decorada (com inferred_type):
+Program
+  Include
+    Literal (stdio.h)
+  FunctionDecl
+    Type (int)
+    Identifier (main)
+    ParamList
+    Block
+      VarDecl
+        Type (int)
+        Identifier (a)
+        Literal (5)
+      VarDecl
+        Type (float)
+        Identifier (b)
+        Literal (2.5)
+      VarDecl
+        Type (double)
+        Identifier (c)
+        BinaryOp (+)
+          Identifier (a)
+          Identifier (b)
+      VarDecl
+        Type (int)
+        Identifier (d)
+        BinaryOp (-)
+          Literal (10)
+          Literal (3)
+      VarDecl
+        Type (bool)
+        Identifier (e)
+        BinaryOp (>)
+          Literal (5)
+          Literal (3)
+      VarDecl
+        Type (bool)
+        Identifier (f)
+        BinaryOp (==)
+          Literal (10)
+          Literal (10)
+      VarDecl
+        Type (int)
+        Identifier (g)
+        BinaryOp (*)
+          Identifier (a)
+          Literal (2)
+      Return
+        Literal (0)
+
+Tabela de Simbolos:
+  Escopo 0 (nivel 0):
+    main | tipo: Int("int") | cat: Function | linha: 0 | addr: 0 | bytes: 0
+  Escopo 1 (nivel 1):
+    e | tipo: Bool("bool") | cat: Variable | linha: 9 | addr: 20 | bytes: 1
+    c | tipo: Double("double") | cat: Variable | linha: 7 | addr: 8 | bytes: 8
+    a | tipo: Int("int") | cat: Variable | linha: 5 | addr: 0 | bytes: 4
+    d | tipo: Int("int") | cat: Variable | linha: 8 | addr: 16 | bytes: 4
+    f | tipo: Bool("bool") | cat: Variable | linha: 10 | addr: 21 | bytes: 1
+    b | tipo: Float("float") | cat: Variable | linha: 6 | addr: 4 | bytes: 4
+    g | tipo: Int("int") | cat: Variable | linha: 11 | addr: 22 | bytes: 4
+
+--- test_break_continue.cpp ---
+Resultado: ERRO SEMANTICO
+Break na linha 11 fora de loop ou switch
+
+--- test_class.cpp ---
+Resultado: ERRO SEMANTICO
+Construtor 'Pessoa' ja declarado na linha 23, redeclarado na linha 17
+
+--- test_constructor_error.cpp ---
+Resultado: SUCESSO
+
+AST Decorada (com inferred_type):
+Program
+  Include
+    Literal (stdio.h)
+  ClassDecl
+    Identifier (Pessoa)
+    AccessSection
+      Modifier (public)
+      VarDecl
+        Type (string)
+        Identifier (nome)
+  Error
+  Error
+  Error
+  Error
+  FunctionDecl
+    Type (int)
+    Identifier (main)
+    ParamList
+    Block
+      Return
+        Literal (0)
+
+Tabela de Simbolos:
+  Escopo 0 (nivel 0):
+    nome | tipo: String("string") | cat: Variable | linha: 8 | addr: 0 | bytes: 8
+    main | tipo: Int("int") | cat: Function | linha: 0 | addr: 0 | bytes: 0
+    Pessoa | tipo: Int("") | cat: Class | linha: 11 | addr: 0 | bytes: 0
+
+--- test_dowhile.cpp ---
+Resultado: ERRO SEMANTICO
+Condicao do do-while deve ser 'bool' ou 'int', encontrou 'string' na linha 20
+
+--- test_duplicate_var.cpp ---
+Resultado: ERRO SEMANTICO
+Variavel 'x' ja declarada na linha 5, redeclarada na linha 6
+
+--- test_for.cpp ---
+Resultado: SUCESSO
+
+AST Decorada (com inferred_type):
+Program
+  Include
+    Literal (stdio.h)
+  FunctionDecl
+    Type (int)
+    Identifier (main)
+    ParamList
+    Block
+      VarDecl
+        Type (int)
+        Identifier (i)
+      For
+        Assign (=)
+          Identifier (i)
+          Literal (0)
+        BinaryOp (<)
+          Identifier (i)
+          Literal (10)
+        Assign (=)
+          Identifier (i)
+          BinaryOp (+)
+            Identifier (i)
+            Literal (1)
+        Block
+          VarDecl
+            Type (int)
+            Identifier (x)
+            Literal (1)
+      For
+        Assign (=)
+          Identifier (i)
+          Literal (0)
+        Identifier (i)
+        Assign (=)
+          Identifier (i)
+          BinaryOp (+)
+            Identifier (i)
+            Literal (1)
+        Block
+          VarDecl
+            Type (int)
+            Identifier (y)
+            Literal (2)
+      For
+        Assign (=)
+          Identifier (i)
+          Literal (0)
+        Literal ("erro")
+        Assign (=)
+          Identifier (i)
+          BinaryOp (+)
+            Identifier (i)
+            Literal (1)
+        Block
+          VarDecl
+            Type (int)
+            Identifier (z)
+            Literal (3)
+      Return
+        Literal (0)
+
+Tabela de Simbolos:
+  Escopo 0 (nivel 0):
+    main | tipo: Int("int") | cat: Function | linha: 0 | addr: 0 | bytes: 0
+  Escopo 1 (nivel 1):
+    i | tipo: Int("int") | cat: Variable | linha: 5 | addr: 0 | bytes: 4
+  Escopo 3 (nivel 3):
+    x | tipo: Int("int") | cat: Variable | linha: 8 | addr: 0 | bytes: 4
+  Escopo 5 (nivel 3):
+    y | tipo: Int("int") | cat: Variable | linha: 12 | addr: 0 | bytes: 4
+  Escopo 7 (nivel 3):
+    z | tipo: Int("int") | cat: Variable | linha: 16 | addr: 0 | bytes: 4
+
+--- test_for_decl.cpp ---
+Resultado: SUCESSO
+
+AST Decorada (com inferred_type):
+Program
+  Include
+    Literal (stdio.h)
+  FunctionDecl
+    Type (int)
+    Identifier (main)
+    ParamList
+    Block
+      VarDecl
+        Type (int)
+        Identifier (x)
+        Literal (10)
+      For
+        VarDecl
+          Type (int)
+          Identifier (i)
+          Literal (0)
+        BinaryOp (<)
+          Identifier (i)
+          Literal (10)
+        Assign (=)
+          Identifier (i)
+          BinaryOp (+)
+            Identifier (i)
+            Literal (1)
+        Block
+          VarDecl
+            Type (int)
+            Identifier (temp)
+            Identifier (i)
+      VarDecl
+        Type (int)
+        Identifier (j)
+      For
+        Assign (=)
+          Identifier (j)
+          Literal (0)
+        Identifier (j)
+        Assign (=)
+          Identifier (j)
+          BinaryOp (+)
+            Identifier (j)
+            Literal (1)
+        Block
+          VarDecl
+            Type (int)
+            Identifier (y)
+            Identifier (j)
+      Return
+        Literal (0)
+
+Tabela de Simbolos:
+  Escopo 0 (nivel 0):
+    main | tipo: Int("int") | cat: Function | linha: 0 | addr: 0 | bytes: 0
+  Escopo 1 (nivel 1):
+    x | tipo: Int("int") | cat: Variable | linha: 5 | addr: 0 | bytes: 4
+    j | tipo: Int("int") | cat: Variable | linha: 10 | addr: 4 | bytes: 4
+  Escopo 2 (nivel 2):
+    i | tipo: Int("int") | cat: Variable | linha: 6 | addr: 0 | bytes: 4
+  Escopo 3 (nivel 3):
+    i | tipo: Int("int") | cat: Variable | linha: 8 | addr: 0 | bytes: 4
+  Escopo 5 (nivel 3):
+    j | tipo: Int("int") | cat: Variable | linha: 13 | addr: 0 | bytes: 4
+
+--- test_function.cpp ---
+Resultado: ERRO SEMANTICO
+Funcao 'soma' na linha 12 espera 2 argumentos, mas 1 foram passados
+
+--- test_function_arg_types.cpp ---
+Resultado: ERRO SEMANTICO
+Argumento 1 da funcao 'soma' na linha 10: esperado 'int', obtido 'string'
+
+--- test_if.cpp ---
+Resultado: ERRO SEMANTICO
+Condicao do if deve ser 'bool' ou 'int', encontrou 'string' na linha 14
+
+--- test_ok.cpp ---
+Resultado: SUCESSO
+
+AST Decorada (com inferred_type):
+Program
+  Include
+    Literal (stdio.h)
+  FunctionDecl
+    Type (int)
+    Identifier (soma)
+    ParamList
+      Param
+        Type (int)
+        Identifier (a)
+      Param
+        Type (int)
+        Identifier (b)
+    Block
+      Return
+        BinaryOp (+)
+          Identifier (a)
+          Identifier (b)
+  FunctionDecl
+    Type (int)
+    Identifier (main)
+    ParamList
+    Block
+      VarDecl
+        Type (int)
+        Identifier (x)
+        Literal (10)
+      VarDecl
+        Type (float)
+        Identifier (y)
+        Literal (3.14)
+      VarDecl
+        Type (double)
+        Identifier (z)
+        Literal (2.718)
+      VarDecl
+        Type (bool)
+        Identifier (flag)
+        Literal (true)
+      ArrayDecl
+        Type (int)
+        Identifier (arr)
+        ArrayDimension
+          Literal (10)
+      ArrayDecl
+        Type (int)
+        Identifier (mat)
+        ArrayDimension
+          Literal (3)
+        ArrayDimension
+          Literal (5)
+      If
+        BinaryOp (>)
+          Identifier (x)
+          Literal (5)
+        Block
+          VarDecl
+            Type (int)
+            Identifier (w)
+            Literal (1)
+      While
+        BinaryOp (>)
+          Identifier (x)
+          Literal (0)
+        Block
+          Assign (=)
+            Identifier (x)
+            BinaryOp (-)
+              Identifier (x)
+              Literal (1)
+      VarDecl
+        Type (int)
+        Identifier (i)
+      For
+        Assign (=)
+          Identifier (i)
+          Literal (0)
+        BinaryOp (<)
+          Identifier (i)
+          Literal (10)
+        Assign (=)
+          Identifier (i)
+          BinaryOp (+)
+            Identifier (i)
+            Literal (1)
+        Block
+          VarDecl
+            Type (int)
+            Identifier (temp)
+            Identifier (i)
+      VarDecl
+        Type (int)
+        Identifier (resultado)
+        Call
+          Identifier (soma)
+          Literal (10)
+          Literal (20)
+      Return
+        Literal (0)
+
+Tabela de Simbolos:
+  Escopo 0 (nivel 0):
+    soma | tipo: Int("int") | cat: Function | linha: 8 | addr: 0 | bytes: 0
+      params: ["int", "int"]
+    main | tipo: Int("int") | cat: Function | linha: 0 | addr: 0 | bytes: 0
+  Escopo 1 (nivel 1):
+    a | tipo: Int("int") | cat: Parameter | linha: 3 | addr: 0 | bytes: 4
+    b | tipo: Int("int") | cat: Parameter | linha: 3 | addr: 4 | bytes: 4
+  Escopo 2 (nivel 1):
+    z | tipo: Double("double") | cat: Variable | linha: 12 | addr: 8 | bytes: 8
+    i | tipo: Int("int") | cat: Variable | linha: 27 | addr: 117 | bytes: 4
+    resultado | tipo: Int("int") | cat: Variable | linha: 33 | addr: 121 | bytes: 4
+    x | tipo: Int("int") | cat: Variable | linha: 10 | addr: 0 | bytes: 4
+    arr | tipo: Int("int") | cat: Array | linha: 14 | addr: 17 | bytes: 40
+    mat | tipo: Int("int") | cat: Array | linha: 15 | addr: 57 | bytes: 60
+    flag | tipo: Bool("bool") | cat: Variable | linha: 13 | addr: 16 | bytes: 1
+    y | tipo: Float("float") | cat: Variable | linha: 11 | addr: 4 | bytes: 4
+  Escopo 3 (nivel 2):
+    w | tipo: Int("int") | cat: Variable | linha: 19 | addr: 0 | bytes: 4
+  Escopo 6 (nivel 3):
+    i | tipo: Int("int") | cat: Variable | linha: 30 | addr: 0 | bytes: 4
+
+--- test_return_type.cpp ---
+Resultado: ERRO SEMANTICO
+Tipo de retorno incompativel na linha 19: funcao retorna 'int', mas expressao e 'string'
+
+--- test_undeclared.cpp ---
+Resultado: ERRO SEMANTICO
+Variavel 'y' nao declarada na linha 6
+
+--- test_var_decl.cpp ---
+Resultado: ERRO SEMANTICO
+Variavel 'x' ja declarada na linha 5, redeclarada na linha 11
+
+--- test_while.cpp ---
+Resultado: ERRO SEMANTICO
+Condicao do while deve ser 'bool' ou 'int', encontrou 'string' na linha 14
+

@@ -70,12 +70,12 @@ Tabela de Simbolos:
     main | tipo: Int("int") | cat: Function | linha: 0 | addr: 0 | bytes: 0
   Escopo 1 (nivel 1):
     e | tipo: Bool("bool") | cat: Variable | linha: 9 | addr: 20 | bytes: 1
-    c | tipo: Double("double") | cat: Variable | linha: 7 | addr: 8 | bytes: 8
     a | tipo: Int("int") | cat: Variable | linha: 5 | addr: 0 | bytes: 4
+    c | tipo: Double("double") | cat: Variable | linha: 7 | addr: 8 | bytes: 8
     d | tipo: Int("int") | cat: Variable | linha: 8 | addr: 16 | bytes: 4
     f | tipo: Bool("bool") | cat: Variable | linha: 10 | addr: 21 | bytes: 1
-    b | tipo: Float("float") | cat: Variable | linha: 6 | addr: 4 | bytes: 4
     g | tipo: Int("int") | cat: Variable | linha: 11 | addr: 22 | bytes: 4
+    b | tipo: Float("float") | cat: Variable | linha: 6 | addr: 4 | bytes: 4
 
 --- test_break_continue.cpp ---
 Resultado: ERRO SEMANTICO
@@ -261,8 +261,8 @@ Tabela de Simbolos:
   Escopo 0 (nivel 0):
     main | tipo: Int("int") | cat: Function | linha: 0 | addr: 0 | bytes: 0
   Escopo 1 (nivel 1):
-    x | tipo: Int("int") | cat: Variable | linha: 5 | addr: 0 | bytes: 4
     j | tipo: Int("int") | cat: Variable | linha: 10 | addr: 4 | bytes: 4
+    x | tipo: Int("int") | cat: Variable | linha: 5 | addr: 0 | bytes: 4
   Escopo 2 (nivel 2):
     i | tipo: Int("int") | cat: Variable | linha: 6 | addr: 0 | bytes: 4
   Escopo 3 (nivel 3):
@@ -395,14 +395,14 @@ Tabela de Simbolos:
     a | tipo: Int("int") | cat: Parameter | linha: 3 | addr: 0 | bytes: 4
     b | tipo: Int("int") | cat: Parameter | linha: 3 | addr: 4 | bytes: 4
   Escopo 2 (nivel 1):
-    z | tipo: Double("double") | cat: Variable | linha: 12 | addr: 8 | bytes: 8
-    i | tipo: Int("int") | cat: Variable | linha: 27 | addr: 117 | bytes: 4
     resultado | tipo: Int("int") | cat: Variable | linha: 33 | addr: 121 | bytes: 4
-    x | tipo: Int("int") | cat: Variable | linha: 10 | addr: 0 | bytes: 4
-    arr | tipo: Int("int") | cat: Array | linha: 14 | addr: 17 | bytes: 40
-    mat | tipo: Int("int") | cat: Array | linha: 15 | addr: 57 | bytes: 60
     flag | tipo: Bool("bool") | cat: Variable | linha: 13 | addr: 16 | bytes: 1
     y | tipo: Float("float") | cat: Variable | linha: 11 | addr: 4 | bytes: 4
+    mat | tipo: Int("int") | cat: Array | linha: 15 | addr: 57 | bytes: 60
+    i | tipo: Int("int") | cat: Variable | linha: 27 | addr: 117 | bytes: 4
+    z | tipo: Double("double") | cat: Variable | linha: 12 | addr: 8 | bytes: 8
+    arr | tipo: Int("int") | cat: Array | linha: 14 | addr: 17 | bytes: 40
+    x | tipo: Int("int") | cat: Variable | linha: 10 | addr: 0 | bytes: 4
   Escopo 3 (nivel 2):
     w | tipo: Int("int") | cat: Variable | linha: 19 | addr: 0 | bytes: 4
   Escopo 6 (nivel 3):

@@ -2,6 +2,7 @@ use std::fs;
 use std::path::Path;
 use std::panic;
 use std::cell::RefCell;
+use std::env;
 
 mod ast;
 mod lexer;
@@ -88,7 +89,60 @@ fn processar_ficheiro(caminho: &Path) -> String {
     saida
 }
 
+fn processar_ficheiro_erro(caminho: &Path) -> Option<String> {
+    let nome = caminho.file_name().unwrap().to_string_lossy().to_string();
+    let conteudo = match fs::read_to_string(caminho) {
+        Ok(c) => c,
+        Err(e) => return Some(format!("{}: ERRO ao ler ficheiro: {}", nome, e)),
+    };
+
+    let tokens = lexer::tokenizar(&conteudo);
+    let ast = analise_sintatica::analisar(tokens);
+
+    ULTIMO_ERRO.with(|e| *e.borrow_mut() = None);
+
+    let old_hook = panic::take_hook();
+    panic::set_hook(Box::new(|info| {
+        let msg = if let Some(s) = info.payload().downcast_ref::<String>() {
+            s.clone()
+        } else if let Some(s) = info.payload().downcast_ref::<&str>() {
+            s.to_string()
+        } else {
+            "Erro desconhecido".to_string()
+        };
+        ULTIMO_ERRO.with(|e| *e.borrow_mut() = Some(msg));
+    }));
+
+    let resultado = panic::catch_unwind(panic::AssertUnwindSafe(|| {
+        analise_semantica::decorar_ast(ast)
+    }));
+
+    panic::set_hook(old_hook);
+
+    match resultado {
+        Ok(_) => None,
+        Err(_) => {
+            let msg = ULTIMO_ERRO.with(|e| e.borrow().clone().unwrap_or_else(|| "Erro desconhecido".to_string()));
+            Some(format!("{}: {}", nome, msg))
+        }
+    }
+}
+
 fn main() {
+    let args: Vec<String> = env::args().collect();
+
+    if args.len() > 1 {
+        let caminho = Path::new(&args[1]);
+        if !caminho.exists() {
+            eprintln!("Ficheiro '{}' nao encontrado", args[1]);
+            std::process::exit(1);
+        }
+        match processar_ficheiro_erro(caminho) {
+            Some(erro) => { eprintln!("{}", erro); std::process::exit(1); }
+            None => {}
+        }
+        return;
+    }
     let dir = Path::new("src/files");
     let mut relatorio = String::from("=== RELATORIO DE ANALISE SEMANTICA ===\n\n");
 

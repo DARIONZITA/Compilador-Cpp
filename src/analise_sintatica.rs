@@ -726,7 +726,7 @@ fn st_init_array(tokens: &[TokenInfo], pos: &mut usize) -> Vec<AstNode> {
         if !expect(tokens, pos, Token::AbreChave, "{", follow) {
             return vec![];
         }
-        let mut inits = st_lista_init(tokens, pos);
+        let inits = st_lista_init(tokens, pos);
         if !expect(tokens, pos, Token::FechaChave, "}", follow) {
             return vec![];
         }
@@ -915,7 +915,7 @@ fn st_comando_seleccao(tokens: &[TokenInfo], pos: &mut usize) -> AstNode {
 
 // <else-parte> ::= "else" <else-corpo> | ε
 fn st_else_parte(tokens: &[TokenInfo], pos: &mut usize) -> Option<AstNode> {
-    let follow = &[Token::FechaChave, Token::PtVirgula, Token::Else, Token::Case, Token::Default];
+    let _follow = &[Token::FechaChave, Token::PtVirgula, Token::Else, Token::Case, Token::Default];
 
     if *pos < tokens.len() && tokens[*pos].kind == Token::Else {
         *pos += 1;
@@ -1164,7 +1164,7 @@ fn st_atribuicao(tokens: &[TokenInfo], pos: &mut usize) -> AstNode {
 
 // <atribuicao'> ::= <op-atrib> <atribuicao> | ε
 fn st_atribuicao_resto(tokens: &[TokenInfo], pos: &mut usize, left: AstNode) -> AstNode {
-    let follow = &[Token::PtVirgula, Token::FechaParen, Token::Virgula, Token::FechaColch];
+    let _follow = &[Token::PtVirgula, Token::FechaParen, Token::Virgula, Token::FechaColch];
 
     if *pos < tokens.len() && eh_op_atrib(tokens[*pos].kind) {
         let op = lexema_at(tokens, *pos);
@@ -1185,7 +1185,7 @@ fn st_expr_logica(tokens: &[TokenInfo], pos: &mut usize) -> AstNode {
 // <expr-logica'> ::= "&&" <expr-relacional> <expr-logica'>
 //                  | "||" <expr-relacional> <expr-logica'> | ε
 fn st_expr_logica_resto(tokens: &[TokenInfo], pos: &mut usize, left: AstNode) -> AstNode {
-    let follow = &[Token::PtVirgula, Token::FechaParen, Token::Virgula, Token::FechaColch, Token::Atribuicao];
+    let _follow = &[Token::PtVirgula, Token::FechaParen, Token::Virgula, Token::FechaColch, Token::Atribuicao];
 
     if *pos < tokens.len() && matches!(tokens[*pos].kind, Token::And | Token::Or) {
         let op = lexema_at(tokens, *pos);
@@ -1208,7 +1208,7 @@ fn st_expr_relacional(tokens: &[TokenInfo], pos: &mut usize) -> AstNode {
 
 // <expr-relacional'> ::= <op-relacional> <expr-aritmetica> <expr-relacional'> | ε
 fn st_expr_relacional_resto(tokens: &[TokenInfo], pos: &mut usize, left: AstNode) -> AstNode {
-    let follow = &[Token::PtVirgula, Token::FechaParen, Token::Virgula, Token::FechaColch, Token::And, Token::Or, Token::Atribuicao];
+    let _follow = &[Token::PtVirgula, Token::FechaParen, Token::Virgula, Token::FechaColch, Token::And, Token::Or, Token::Atribuicao];
 
     if *pos < tokens.len() && eh_op_relacional(tokens[*pos].kind) {
         let op = lexema_at(tokens, *pos);
@@ -1230,7 +1230,7 @@ fn st_expr_aritmetica(tokens: &[TokenInfo], pos: &mut usize) -> AstNode {
 // <expr-aritmetica'> ::= "+" <termo> <expr-aritmetica'>
 //                      | "-" <termo> <expr-aritmetica'> | ε
 fn st_expr_aritmetica_resto(tokens: &[TokenInfo], pos: &mut usize, left: AstNode) -> AstNode {
-    let follow = &[Token::PtVirgula, Token::FechaParen, Token::Virgula, Token::FechaColch, Token::And, Token::Or, Token::Igual, Token::Diferente, Token::Menor, Token::Maior, Token::Atribuicao];
+    let _follow = &[Token::PtVirgula, Token::FechaParen, Token::Virgula, Token::FechaColch, Token::And, Token::Or, Token::Igual, Token::Diferente, Token::Menor, Token::Maior, Token::Atribuicao];
 
     if *pos < tokens.len() && matches!(tokens[*pos].kind, Token::Adicao | Token::Subtracao) {
         let op = lexema_at(tokens, *pos);
@@ -1254,7 +1254,7 @@ fn st_termo(tokens: &[TokenInfo], pos: &mut usize) -> AstNode {
 // <termo'> ::= "*" <factor> <termo'>
 //            | "/" <factor> <termo'> | "%" <factor> <termo'> | ε
 fn st_termo_resto(tokens: &[TokenInfo], pos: &mut usize, left: AstNode) -> AstNode {
-    let follow = &[Token::PtVirgula, Token::FechaParen, Token::Virgula, Token::FechaColch, Token::Adicao, Token::Subtracao, Token::And, Token::Or, Token::Igual, Token::Diferente, Token::Menor, Token::Maior, Token::Atribuicao];
+    let _follow = &[Token::PtVirgula, Token::FechaParen, Token::Virgula, Token::FechaColch, Token::Adicao, Token::Subtracao, Token::And, Token::Or, Token::Igual, Token::Diferente, Token::Menor, Token::Maior, Token::Atribuicao];
 
     if *pos < tokens.len() && matches!(tokens[*pos].kind, Token::Multiplicacao | Token::Divisao | Token::Modulo) {
         let op = lexema_at(tokens, *pos);

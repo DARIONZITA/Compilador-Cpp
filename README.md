@@ -1,86 +1,86 @@
-# Compilador C++ em Rust
+# C++ Compiler in Rust
 
-Compilador / analisador para um subconjunto da linguagem C++, construído em Rust. Actualmente implementa três fases: análise léxica, análise sintática (com construção de AST) e análise semântica.
+A compiler / analyzer for a subset of the C++ language, built in Rust. Currently implements three phases: lexical analysis, syntactic analysis (with AST construction), and semantic analysis.
 
-## Estrutura do Projeto
+## Project Structure
 
 ```
 src/
-├── main.rs                 ← ponto de entrada
-├── lexer.rs                ← tokenização (analisador léxico)
-├── token.rs                ← definição de tokens
-├── ast.rs                  ← tipos de nós da AST (AstKind, AstNode)
-├── analise_sintatica.rs    ← parser LL(1) → AST
-├── analise_semantica.rs    ← validação semântica → AST decorada
-├── scope.rs                ← tabela de símbolos e tipos de escopo
-├── utils.rs                ← funções auxiliares
-└── files/                  ← ficheiros de teste .cpp
+├── main.rs                 ← entry point
+├── lexer.rs                ← tokenizer (lexical analyzer)
+├── token.rs                ← token definitions
+├── ast.rs                  ← AST node types (AstKind, AstNode)
+├── analise_sintatica.rs    ← LL(1) parser → AST
+├── analise_semantica.rs    ← semantic validation → decorated AST
+├── scope.rs                ← symbol table and scope types
+├── utils.rs                ← utility functions
+└── files/                  ← .cpp test files
 ```
 
-## Fases Implementadas
+## Implemented Phases
 
-### Fase 1 — Análise Léxica
-Converte código-fonte numa sequência de tokens (identificadores, literais, operadores, palavras-chave, delimitadores).
+### Phase 1 — Lexical Analysis
+Converts source code into a stream of tokens (identifiers, literals, operators, keywords, delimiters).
 
-### Fase 2 — Análise Sintática
-Parser LL(1) que valida a estrutura gramatical e constrói a Árvore de Sintaxe Abstrata (AST). Suporta classes, herança, funções, arrays, estruturas de controlo, expressões e E/S.
+### Phase 2 — Syntactic Analysis
+LL(1) parser that validates grammatical structure and builds the Abstract Syntax Tree (AST). Supports classes, inheritance, functions, arrays, control flow, expressions, and I/O.
 
-### Fase 3 — Análise Semântica
-Valida o significado do código-fonte:
-- Variáveis e funções declaradas antes de usar
-- Escopos e variable shadowing
-- Compatibilidade de tipos (com promoção int↔float↔double)
-- Tipos em argumentos de função
-- Condições em estruturas de controlo (if/while/for/do-while)
-- Tipo de retorno em funções
-- Break/Continue em contextos válidos
-- Declarações duplicadas
-- Construtores dentro de classes
+### Phase 3 — Semantic Analysis
+Validates the meaning of source code:
+- Variables and functions declared before use
+- Scopes and variable shadowing
+- Type compatibility (with int↔float↔double promotion)
+- Function argument types
+- Conditions in control structures (if/while/for/do-while)
+- Function return types
+- Break/Continue in valid contexts
+- Duplicate declarations
+- Constructors inside classes
 
-## Como Executar
+## How to Run
 
-### Pré-requisitos
-- [Rust e Cargo](https://www.rust-lang.org/pt-BR/tools/install)
+### Prerequisites
+- [Rust and Cargo](https://www.rust-lang.org/tools/install)
 
-### Comandos
+### Commands
 
 ```bash
-# Compilar e executar — processa todos os .cpp em src/files/ → relatorio.txt
+# Build and run — process all .cpp files in src/files/ → relatorio.txt
 cargo run
 
-# Processar um ficheiro específico — imprime apenas erros no stderr
+# Process a specific file — print only errors to stderr
 cargo run -- src/files/test_ok.cpp
 
-# Build de produção
+# Production build
 cargo build --release
 ```
 
-### Modo ficheiro único
+### Single File Mode
 
 ```bash
 cargo run -- src/files/test_undeclared.cpp
 ```
 
-| Resultado | Saída | Exit code |
-|-----------|-------|-----------|
-| Sem erros | (nada) | 0 |
-| Erro semântico | `nome.cpp: mensagem de erro` (stderr) | 1 |
-| Ficheiro não existe | `Ficheiro '...' nao encontrado` (stderr) | 1 |
+| Result | Output | Exit code |
+|--------|--------|-----------|
+| No errors | (nothing) | 0 |
+| Semantic error | `filename.cpp: error message` (stderr) | 1 |
+| File not found | `File '...' not found` (stderr) | 1 |
 
-### Modo todos os ficheiros
+### All Files Mode
 
 ```bash
 cargo run
 ```
 
-Processa todos os `.cpp` em `src/files/` e gera `relatorio.txt` com a AST decorada, tabela de símbolos e erros semânticos.
+Processes all `.cpp` files in `src/files/` and generates `relatorio.txt` with decorated AST, symbol table, and semantic errors.
 
-## Documentação
+## Documentation
 
-- `mds/MU.md` — Manual do utilizador (lexer)
-- `mds/MP.md` — Manual do programador (lexer)
-- `mds/MU_PARSER.md` — Manual do utilizador (parser)
-- `mds/MP_PARSER.md` — Manual do programador (parser)
-- `mds/MU_SEMANTICO.md` — Manual do utilizador (analisador semântico)
-- `mds/MP_SEMANTICO.md` — Manual do programador (analisador semântico)
-- `documentos/pp2-analise-sintatica/AST.md` — Especificação da AST
+- `mds/MU.md` — User manual (lexer)
+- `mds/MP.md` — Programmer manual (lexer)
+- `mds/MU_PARSER.md` — User manual (parser)
+- `mds/MP_PARSER.md` — Programmer manual (parser)
+- `mds/MU_SEMANTICO.md` — User manual (semantic analyzer)
+- `mds/MP_SEMANTICO.md` — Programmer manual (semantic analyzer)
+- `documentos/pp2-analise-sintatica/AST.md` — AST specification
